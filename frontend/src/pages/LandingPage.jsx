@@ -118,7 +118,7 @@ const LandingPage = () => {
 
             {/* Right Content - Demo Dashboard */}
             <div className="relative">
-              <div className="bg-white rounded-2xl shadow-2xl p-6 transform rotate-3 hover:rotate-0 transition-transform duration-300">
+              <div className="bg-white rounded-2xl shadow-2xl p-6">
                 <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-4 mb-4">
                   <h3 className="text-white font-semibold mb-2">Dashboard Overview</h3>
                   <div className="grid grid-cols-2 gap-3">
