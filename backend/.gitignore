@@ -6,13 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-# Ignore .env files in backend and frontend directories
-/backend/.env
-/frontend/.env
-*.env
-
-
+.env
 node_modules
 dist
 dist-ssr
