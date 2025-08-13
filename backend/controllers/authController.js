@@ -16,7 +16,7 @@ exports.signup = async (req, res) => {
     const otp = uuidv4().split('-')[0];
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
 
-    const retailer = new Retailer({ shopName, email, password: hashedPassword, otp, otpExpiresAt });
+    const retailer = new Retailer({ shopName, email, password: hashedPassword, otp, otpExpiresAt ,isEmailVerified:true});
     await retailer.save();
 
     try {

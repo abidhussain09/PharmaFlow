@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import config from '../config/env';
+import { Navbar } from '../components/common/Navbar';
 
 const LandingPage = () => {
   const features = [
@@ -37,43 +38,8 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-2 mr-3 transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                <i className="fas fa-capsules text-xl text-white"></i>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  {config.APP_NAME}
-                </h1>
-                <p className="text-xs text-gray-500">Pharmacy Management</p>
-              </div>
-            </div>
-            
-            {/* Navigation Links */}
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/login"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/register"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
+      <Navbar/>
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -92,7 +58,7 @@ const LandingPage = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link
-                  to="/register"
+                  to="/register-guest"
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl inline-flex items-center justify-center"
                 >
                   <i className="fas fa-user-plus mr-2"></i>
@@ -201,7 +167,7 @@ const LandingPage = () => {
             Experience our pharmacy management system with a demo account. No commitment required!
           </p>
           <Link
-            to="/register"
+            to="/register-guest"
             className="bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl inline-flex items-center"
           >
             <i className="fas fa-rocket mr-2"></i>
