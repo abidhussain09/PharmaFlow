@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema(
     },
     wholesaler: {
       type: String,
-      required: true, 
+      required: true,
       trim: true,
     },
     price: {
@@ -25,10 +25,10 @@ const productSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-     lowStockThreshold: {
-     type: Number,
-     default: 5, 
-   },
+    lowStockThreshold: {
+      type: Number,
+      default: 5,
+    },
     category: {
       type: String,
       trim: true,

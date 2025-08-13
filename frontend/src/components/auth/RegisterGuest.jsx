@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { clearError, signup } from '../../store/slices/authSlice';
+import { guestSignup, clearError } from '../../store/slices/authSlice';
 
-const Register = () => {
+const RegisterGuest = () => {
   const [formData, setFormData] = useState({
     shopName: '',
     email: '',
@@ -44,7 +44,8 @@ const Register = () => {
     }
 
     const { confirmPassword, ...signupData } = formData;
-    dispatch(signup(signupData));
+    // Use guest signup for demo accounts
+    dispatch(guestSignup(signupData));
   };
 
   return (
@@ -59,7 +60,7 @@ const Register = () => {
             Join PharmaFlow
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Create your demo pharmacy management account -- NOT DEMO
+            Create your demo pharmacy management account
           </p>
         </div>
 
@@ -229,4 +230,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterGuest;

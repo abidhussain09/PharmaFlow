@@ -12,22 +12,20 @@ const cors = require('cors');
 
 const PORT=process.env.PORT||3000;
 
-// CORS Configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: process.env.CORS_ORIGIN || process.env.FRONTEND_URL ,
   credentials: true,
   optionsSuccessStatus: 200
 };
 
 // Middleware
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '10mb' })); // To parse JSON bodies
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// connect to DB
+
 require('./config/database.js').connect();
 
-// Start guest cleanup service
 cleanupService.start();
 
 //mount
