@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Add useNavigate import
 import { fetchProducts, deleteProduct, setSelectedProduct } from '../store/slices/productSlice';
 import config from '../config/env';
 
 const Products = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Add this hook
   const { products, loading, error } = useSelector((state) => state.products);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
@@ -23,7 +24,8 @@ const Products = () => {
 
   const handleEdit = (product) => {
     dispatch(setSelectedProduct(product));
-    // Navigate to edit form or open modal
+    // Navigate to edit form
+    navigate('/products/add'); // Add this line to navigate to the edit page
   };
 
   const formatCurrency = (amount) => {
@@ -33,6 +35,7 @@ const Products = () => {
     }).format(amount);
   };
 
+  // Rest of your component remains the same...
   // Filter and sort products
   const filteredProducts = products
     .filter(product =>
@@ -103,7 +106,7 @@ const Products = () => {
               <input
                 type="text"
                 id="search"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full  p-1 border border-gray-400  rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Search by name, wholesaler, or category..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -115,7 +118,7 @@ const Products = () => {
               </label>
               <select
                 id="sortBy"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full  p-1 border border-gray-400  rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
@@ -132,7 +135,7 @@ const Products = () => {
               </label>
               <select
                 id="sortOrder"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full  p-1 border border-gray-400  rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
               >

@@ -45,7 +45,13 @@ const NewSale = () => {
 
   const addProductToSale = (product) => {
     const existingProduct = selectedProducts.find(p => p.product._id === product._id);
-
+    
+    // Check if product has marginPercentage (it might not exist yet)
+    // If not, use the default margin from config
+    const marginPercentage = product.marginPercentage !== undefined 
+      ? product.marginPercentage 
+      : config.BUSINESS.DEFAULT_MARGIN_PERCENTAGE;
+    
     if (existingProduct) {
       // Increase quantity if product already exists
       setSelectedProducts(prev => prev.map(p =>
@@ -58,7 +64,7 @@ const NewSale = () => {
       setSelectedProducts(prev => [...prev, {
         product: product,
         quantity: 1,
-        price: product.price * (1 + config.BUSINESS.DEFAULT_MARGIN_PERCENTAGE / 100) // Default markup, can be edited
+        price: product.price * (1 + marginPercentage / 100)
       }]);
     }
 
@@ -205,7 +211,7 @@ const NewSale = () => {
                   name="name"
                   value={customerInfo.name}
                   onChange={handleCustomerChange}
-                  className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                  className={`mt-1 block w-full p-1 border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
                     errors.name ? 'border-red-300' : ''
                   }`}
                   placeholder="Enter customer name"
@@ -223,7 +229,7 @@ const NewSale = () => {
                   name="email"
                   value={customerInfo.email}
                   onChange={handleCustomerChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full  p-1 border border-gray-400  rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="customer@example.com"
                 />
               </div>
@@ -238,7 +244,7 @@ const NewSale = () => {
                   name="phone"
                   value={customerInfo.phone}
                   onChange={handleCustomerChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full  p-1 border border-gray-400  rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="+91 9876543210"
                 />
               </div>
@@ -253,7 +259,7 @@ const NewSale = () => {
                   name="address"
                   value={customerInfo.address}
                   onChange={handleCustomerChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full  p-1 border border-gray-400  rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Customer address"
                 />
               </div>
@@ -282,7 +288,7 @@ const NewSale = () => {
                   setShowProductList(e.target.value.length > 0);
                 }}
                 onFocus={() => setShowProductList(productSearch.length > 0)}
-                className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full  p-1 border border-gray-400  rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Type to search medicines..."
               />
 
