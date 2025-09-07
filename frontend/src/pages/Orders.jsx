@@ -180,128 +180,6 @@ const Orders = () => {
     }
   };
 
-  const handleAddAllToInventory = async () => {
-    const selectedItems = orderList.filter(item => item.isSelected && item.orderQuantity > 0);
-
-    if (selectedItems.length === 0) {
-      alert('Please select at least one item to add to inventory');
-      return;
-    }
-
-    if (!window.confirm(`Are you sure you want to add ${selectedItems.length} selected items to inventory?`)) {
-      return;
-    }
-
-    let successCount = 0;
-    let failCount = 0;
-
-    for (const item of selectedItems) {
-      try {
-        if (item.isNew) {
-          // Create new product
-          const productData = {
-            name: item.name,
-            description: `Added from order list`,
-            wholesaler: item.wholesaler,
-            price: 0,
-            quantity: item.orderQuantity,
-            lowStockThreshold: 5,
-            category: 'General'
-          };
-          await dispatch(createProduct(productData)).unwrap();
-        } else {
-          // Update existing product
-          const existingProduct = products.find(p => p._id === item.id);
-          if (existingProduct) {
-            const updatedProductData = {
-              ...existingProduct,
-              quantity: existingProduct.quantity + item.orderQuantity
-            };
-            await dispatch(updateProduct({
-              id: item.id,
-              productData: updatedProductData
-            })).unwrap();
-          }
-        }
-        successCount++;
-      } catch (error) {
-        console.error(`Failed to add ${item.name}:`, error);
-        failCount++;
-      }
-    }
-
-    // Remove successfully added items from order list
-    if (successCount > 0) {
-      const successfulItems = selectedItems.slice(0, successCount);
-      successfulItems.forEach(item => handleRemoveItem(item.id));
-      dispatch(fetchProducts());
-    }
-
-    // Show summary
-    if (failCount === 0) {
-      alert(`✅ Successfully added ${successCount} items to inventory!`);
-    } else {
-      alert(`⚠️ Added ${successCount} items successfully, ${failCount} failed.`);
-    }
-  };
-
-  const generateOrderSummary = () => {
-    const selectedItems = orderList.filter(item => item.isSelected && item.orderQuantity > 0);
-
-    if (selectedItems.length === 0) {
-      alert('Please select at least one item to order');
-      return;
-    }
-
-    // Group by wholesaler
-    const ordersByWholesaler = selectedItems.reduce((acc, item) => {
-      if (!acc[item.wholesaler]) {
-        acc[item.wholesaler] = [];
-      }
-      acc[item.wholesaler].push(item);
-      return acc;
-    }, {});
-
-    // Generate order summary text
-    let orderSummary = "ORDER SUMMARY\n";
-    orderSummary += "================\n\n";
-
-    Object.entries(ordersByWholesaler).forEach(([wholesaler, items]) => {
-      orderSummary += `WHOLESALER: ${wholesaler}\n`;
-      orderSummary += "-".repeat(30) + "\n";
-
-      items.forEach(item => {
-        orderSummary += `• ${item.name} - Qty: ${item.orderQuantity}`;
-        if (item.notes) {
-          orderSummary += ` (${item.notes})`;
-        }
-        orderSummary += "\n";
-      });
-
-      orderSummary += "\n";
-    });
-
-    orderSummary += `Total Items: ${selectedItems.length}\n`;
-    orderSummary += `Total Quantity: ${selectedItems.reduce((sum, item) => sum + item.orderQuantity, 0)}\n`;
-
-    // Copy to clipboard or download as text file
-    navigator.clipboard.writeText(orderSummary).then(() => {
-      alert('Order summary copied to clipboard!');
-    }).catch(() => {
-      // Fallback: create downloadable text file
-      const blob = new Blob([orderSummary], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `order-summary-${new Date().toISOString().split('T')[0]}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      alert('Order summary downloaded as text file!');
-    });
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -336,20 +214,6 @@ const Orders = () => {
           >
             <span className="mr-2">➕</span>
             Add New Medicine
-          </button>
-          <button
-            onClick={handleAddAllToInventory}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-          >
-            <span className="mr-2">📦</span>
-            Add Selected to Inventory
-          </button>
-          <button
-            onClick={generateOrderSummary}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <span className="mr-2">📋</span>
-            Generate Order Summary
           </button>
         </div>
       </div>
@@ -397,7 +261,7 @@ const Orders = () => {
                   type="text"
                   value={newProduct.name}
                   onChange={(e) => setNewProduct(prev => ({ ...prev, name: e.target.value }))}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full p-1 border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Enter medicine name"
                 />
               </div>
@@ -409,7 +273,7 @@ const Orders = () => {
                   type="text"
                   value={newProduct.wholesaler}
                   onChange={(e) => setNewProduct(prev => ({ ...prev, wholesaler: e.target.value }))}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full  p-1 border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Enter wholesaler name"
                 />
               </div>
@@ -422,7 +286,7 @@ const Orders = () => {
                   min="1"
                   value={newProduct.quantity}
                   onChange={(e) => setNewProduct(prev => ({ ...prev, quantity: e.target.value }))}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full  p-1 border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="0"
                 />
               </div>
@@ -434,7 +298,7 @@ const Orders = () => {
                   type="text"
                   value={newProduct.notes}
                   onChange={(e) => setNewProduct(prev => ({ ...prev, notes: e.target.value }))}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full  p-1 border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Optional notes"
                 />
               </div>

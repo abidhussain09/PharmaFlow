@@ -17,10 +17,10 @@ const AddProduct = () => {
     quantity: '',
     lowStockThreshold: config.BUSINESS.DEFAULT_LOW_STOCK_THRESHOLD.toString(),
     category: '',
+    marginPercentage: config.BUSINESS.DEFAULT_MARGIN_PERCENTAGE.toString(), // Add marginPercentage field
   });
 
   const [errors, setErrors] = useState({});
-  const [marginPercentage, setMarginPercentage] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
 
   // If editing, populate form with selected product data
@@ -34,21 +34,22 @@ const AddProduct = () => {
         quantity: selectedProduct.quantity || '',
         lowStockThreshold: selectedProduct.lowStockThreshold || config.BUSINESS.DEFAULT_LOW_STOCK_THRESHOLD.toString(),
         category: selectedProduct.category || '',
+        marginPercentage: selectedProduct.marginPercentage || config.BUSINESS.DEFAULT_MARGIN_PERCENTAGE.toString(), // Add this
       });
     }
   }, [selectedProduct]);
 
   // Calculate selling price based on margin
   useEffect(() => {
-    if (formData.price && marginPercentage) {
+    if (formData.price && formData.marginPercentage) {
       const costPrice = parseFloat(formData.price);
-      const margin = parseFloat(marginPercentage);
+      const margin = parseFloat(formData.marginPercentage);
       const calculatedSellingPrice = costPrice + (costPrice * margin / 100);
       setSellingPrice(calculatedSellingPrice.toFixed(2));
     } else {
       setSellingPrice('');
     }
-  }, [formData.price, marginPercentage]);
+  }, [formData.price, formData.marginPercentage]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -89,6 +90,10 @@ const AddProduct = () => {
       newErrors.lowStockThreshold = 'Valid alert quantity is required';
     }
 
+    if (!formData.marginPercentage || parseFloat(formData.marginPercentage) < 0) {
+      newErrors.marginPercentage = 'Valid margin percentage is required';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -105,6 +110,7 @@ const AddProduct = () => {
       price: parseFloat(formData.price),
       quantity: parseInt(formData.quantity),
       lowStockThreshold: parseInt(formData.lowStockThreshold),
+      marginPercentage: parseFloat(formData.marginPercentage), // Add this
     };
 
     try {
@@ -160,7 +166,7 @@ const AddProduct = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                className={`p-1 mt-1 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
                   errors.name ? 'border-red-300' : ''
                 }`}
                 placeholder="Enter medicine name"
@@ -179,7 +185,7 @@ const AddProduct = () => {
                 name="wholesaler"
                 value={formData.wholesaler}
                 onChange={handleChange}
-                className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                className={`p-1 mt-1 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
                   errors.wholesaler ? 'border-red-300' : ''
                 }`}
                 placeholder="Enter wholesaler name"
@@ -198,7 +204,7 @@ const AddProduct = () => {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="p-1 mt-1 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="e.g., Antibiotics, Pain Relief"
               />
             </div>
@@ -216,7 +222,7 @@ const AddProduct = () => {
                 min="0"
                 value={formData.price}
                 onChange={handleChange}
-                className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                className={`p-1 mt-1 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
                   errors.price ? 'border-red-300' : ''
                 }`}
                 placeholder="0.00"
@@ -226,20 +232,24 @@ const AddProduct = () => {
 
             {/* Margin Percentage */}
             <div>
-              <label htmlFor="margin" className="block text-sm font-medium text-gray-700">
-                Margin % (Optional)
+              <label htmlFor="marginPercentage" className="block text-sm font-medium text-gray-700">
+                Margin Percentage *
               </label>
               <input
                 type="number"
-                id="margin"
+                id="marginPercentage"
+                name="marginPercentage"
                 step="0.01"
                 min="0"
-                value={marginPercentage}
-                onChange={(e) => setMarginPercentage(e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                value={formData.marginPercentage}
+                onChange={handleChange}
+                className={`p-1 mt-1 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                  errors.marginPercentage ? 'border-red-300' : ''
+                }`}
                 placeholder={`e.g., ${config.BUSINESS.DEFAULT_MARGIN_PERCENTAGE}`}
               />
-              <p className="mt-1 text-xs text-gray-500">Enter margin percentage to calculate selling price</p>
+              {errors.marginPercentage && <p className="mt-1 text-sm text-red-600">{errors.marginPercentage}</p>}
+              <p className="mt-1 text-xs text-gray-500">Profit margin percentage applied to cost price</p>
             </div>
 
             {/* Calculated Selling Price */}
@@ -266,7 +276,7 @@ const AddProduct = () => {
                 min="0"
                 value={formData.quantity}
                 onChange={handleChange}
-                className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                className={`p-1 mt-1 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
                   errors.quantity ? 'border-red-300' : ''
                 }`}
                 placeholder="0"
@@ -286,7 +296,7 @@ const AddProduct = () => {
                 min="0"
                 value={formData.lowStockThreshold}
                 onChange={handleChange}
-                className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                className={`p-1 mt-1 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
                   errors.lowStockThreshold ? 'border-red-300' : ''
                 }`}
                 placeholder="5"
@@ -306,7 +316,7 @@ const AddProduct = () => {
                 rows={3}
                 value={formData.description}
                 onChange={handleChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="p-1 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Optional description or notes about the medicine"
               />
             </div>
